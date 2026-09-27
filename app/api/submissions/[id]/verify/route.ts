@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { evaluateSubmissionOrEdit } from '@/lib/ai/autoFilter';
+import { evaluateWithGemini } from '@/lib/ai/geminiClient';
 
 export async function POST(
   request: Request,
@@ -10,7 +10,7 @@ export async function POST(
     const body = await request.json();
     const { topicTitle, gradeLevel, submissionText } = body;
 
-    const result = await evaluateSubmissionOrEdit({
+    const result = await evaluateWithGemini({
       topicTitle: topicTitle || 'Class 10 - Simple Machines',
       gradeLevel: gradeLevel || 'Class 10',
       submissionText: submissionText || '',

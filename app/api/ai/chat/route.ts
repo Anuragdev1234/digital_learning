@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { processMentorChatMessage } from '@/lib/ai/mentorPrompt';
+import { chatWithGeminiMentor } from '@/lib/ai/geminiClient';
 
 export async function POST(request: Request) {
   try {
@@ -10,7 +10,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Message cannot be empty' }, { status: 400 });
     }
 
-    const response = processMentorChatMessage(message, contextTrack, userState);
+    const response = await chatWithGeminiMentor({ message, contextTrack, userState });
 
     return NextResponse.json({
       content: response.content,
