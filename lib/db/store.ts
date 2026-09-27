@@ -755,6 +755,87 @@ export function usePassportStore() {
     notifyListeners();
   }, []);
 
+  // Mentor Application & Vetting Lifecycle
+  const applyMentor = useCallback((data: {
+    name: string;
+    email: string;
+    tier: 'Tier 2' | 'Tier 3';
+    specialization: string;
+    institution: string;
+    intent: string;
+  }) => {
+    const newMentor: UserProfile = {
+      id: `user-mentor-${Date.now()}`,
+      name: data.name,
+      email: data.email,
+      role: 'mentor',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150',
+      bio: `${data.institution} • ${data.intent}`,
+      specialization: data.specialization,
+      mentorTier: data.tier,
+      credentialStatus: 'pending',
+      passportStatus: 'verified',
+      workflowState: 'ACTIVE_LEARNING',
+      streakDays: 0,
+      tokenBalance: 0,
+      createdAt: new Date().toISOString(),
+    };
+
+    const notif: AppNotification = {
+      id: `notif-${Date.now()}`,
+      userId: 'user-admin',
+      type: 'passport',
+      title: 'New Mentor Application',
+      message: `${data.name} submitted an application for ${data.tier} credential.`,
+      read: false,
+      createdAt: new Date().toISOString(),
+    };
+
+    globalState = {
+      ...globalState,
+      profiles: [...globalState.profiles, newMentor],
+      notifications: [notif, ...globalState.notifications],
+    };
+    notifyListeners();
+    return newMentor;
+  }, []);
+
+  const approveMentor = useCallback((mentorId: string) => {
+    const mentor = globalState.profiles.find((p) => p.id === mentorId);
+    const updatedProfiles = globalState.profiles.map((p) =>
+      p.id === mentorId ? { ...p, credentialStatus: 'verified' as const } : p
+    );
+
+    const notif: AppNotification = {
+      id: `notif-${Date.now()}`,
+      userId: mentorId,
+      type: 'passport',
+      title: 'Mentor Credential Verified!',
+      message: `Your ${mentor?.mentorTier || 'Mentor'} application has been verified by Admin.`,
+      read: false,
+      createdAt: new Date().toISOString(),
+    };
+
+    globalState = {
+      ...globalState,
+      profiles: updatedProfiles,
+      notifications: [notif, ...globalState.notifications],
+    };
+    notifyListeners();
+  }, []);
+
+  const rejectMentor = useCallback((mentorId: string) => {
+    const updatedProfiles = globalState.profiles.map((p) =>
+      p.id === mentorId ? { ...p, credentialStatus: 'rejected' as const } : p
+    );
+
+    globalState = {
+      ...globalState,
+      profiles: updatedProfiles,
+    };
+    notifyListeners();
+  }, []);
+
   return {
     state: globalState,
     currentUser,
@@ -769,5 +850,8 @@ export function usePassportStore() {
     completeOnboarding,
     addStrike,
     addMentorSlot,
+    applyMentor,
+    approveMentor,
+    rejectMentor,
   };
 }

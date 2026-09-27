@@ -3,10 +3,12 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Award, Sparkles, CheckCircle2, ArrowRight, ShieldCheck, HeartHandshake } from 'lucide-react';
+import { usePassportStore } from '@/lib/db/store';
 import confetti from 'canvas-confetti';
 
 export default function MentorApplyPage() {
   const router = useRouter();
+  const { applyMentor } = usePassportStore();
   const [tier, setTier] = useState<'Tier 2' | 'Tier 3'>('Tier 2');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -17,6 +19,14 @@ export default function MentorApplyPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    applyMentor({
+      name,
+      email,
+      tier,
+      specialization,
+      institution,
+      intent,
+    });
     setSubmitted(true);
     confetti({
       particleCount: 80,
