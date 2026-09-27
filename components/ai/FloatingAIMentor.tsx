@@ -73,6 +73,7 @@ export const FloatingAIMentor: React.FC = () => {
   const quickPrompts = [
     'How do I earn execution tokens?',
     'What is Mechanical Advantage = Load / Effort?',
+    'Mechanical Advantage क्या होता है?',
     'Write my submission for scissors', // test graded task refusal!
     'Give me a Socratic hint on Levers',
   ];

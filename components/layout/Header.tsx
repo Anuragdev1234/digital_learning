@@ -3,16 +3,19 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePassportStore } from '@/lib/db/store';
-import { Flame, Coins, Bell, Compass, ShieldCheck } from 'lucide-react';
+import { Flame, Coins, Bell, Compass, ShieldCheck, Languages } from 'lucide-react';
 import { TokenLedgerModal } from '../shared/TokenLedgerModal';
 import { PassportBadge } from '../shared/PassportBadge';
 import { NotificationDrawer } from '../notifications/NotificationDrawer';
+import { SupportedLanguage, TRANSLATIONS } from '@/lib/i18n/translations';
 
 export const Header: React.FC = () => {
   const { currentUser, state } = usePassportStore();
   const [showLedger, setShowLedger] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
+  const [lang, setLang] = useState<SupportedLanguage>('en');
 
+  const t = TRANSLATIONS[lang];
   const unreadNotifs = state.notifications.filter((n) => n.userId === currentUser.id && !n.read);
 
   return (
@@ -32,7 +35,7 @@ export const Header: React.FC = () => {
                   Potential <span className="text-amber-400 font-light">as a</span> Passport
                 </span>
                 <span className="text-[10px] text-slate-400 block -mt-1 font-medium tracking-wide">
-                  Many traditions. One living India.
+                  {t.tagline}
                 </span>
               </div>
             </Link>
@@ -40,13 +43,23 @@ export const Header: React.FC = () => {
 
           {/* Right Action Center */}
           <div className="flex items-center gap-2 sm:gap-4">
+            {/* Vernacular Language Switcher */}
+            <button
+              onClick={() => setLang(lang === 'en' ? 'hi' : 'en')}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 transition-colors"
+              title="Toggle English / हिंदी"
+            >
+              <Languages className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="font-bold font-mono text-[11px]">{lang === 'en' ? 'EN' : 'हिन्दी'}</span>
+            </button>
+
             {/* Streak Counter */}
             <div
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-semibold"
               title="Consecutive Days of Active Study"
             >
               <Flame className="w-4 h-4 fill-orange-500 text-orange-500 animate-bounce" />
-              <span>{currentUser.streakDays} Day Streak</span>
+              <span>{currentUser.streakDays} {t.dayStreak}</span>
             </div>
 
             {/* Token Balance Button (Opens Ledger) */}
@@ -57,7 +70,7 @@ export const Header: React.FC = () => {
             >
               <Coins className="w-4 h-4 text-amber-400 group-hover:rotate-12 transition-transform" />
               <span className="font-mono text-sm">{currentUser.tokenBalance}</span>
-              <span className="text-[10px] text-amber-500/80 font-normal hidden sm:inline">Tokens</span>
+              <span className="text-[10px] text-amber-500/80 font-normal hidden sm:inline">{t.tokens}</span>
             </button>
 
             {/* Passport Badge Pill */}
