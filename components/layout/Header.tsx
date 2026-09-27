@@ -6,11 +6,12 @@ import { usePassportStore } from '@/lib/db/store';
 import { Flame, Coins, Bell, Compass, ShieldCheck } from 'lucide-react';
 import { TokenLedgerModal } from '../shared/TokenLedgerModal';
 import { PassportBadge } from '../shared/PassportBadge';
+import { NotificationDrawer } from '../notifications/NotificationDrawer';
 
 export const Header: React.FC = () => {
   const { currentUser, state } = usePassportStore();
   const [showLedger, setShowLedger] = useState(false);
-  const [showNotifs, setShowNotifs] = useState(false);
+  const [showDrawer, setShowDrawer] = useState(false);
 
   const unreadNotifs = state.notifications.filter((n) => n.userId === currentUser.id && !n.read);
 
@@ -65,9 +66,9 @@ export const Header: React.FC = () => {
             </div>
 
             {/* Notifications Bell */}
-            <div className="relative">
+            <div>
               <button
-                onClick={() => setShowNotifs(!showNotifs)}
+                onClick={() => setShowDrawer(true)}
                 className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors relative"
                 title="Notifications"
               >
@@ -76,37 +77,6 @@ export const Header: React.FC = () => {
                   <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-rose-500 ring-2 ring-slate-900 animate-pulse" />
                 )}
               </button>
-
-              {/* Notifications Dropdown */}
-              {showNotifs && (
-                <div className="absolute right-0 mt-2 w-80 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-4 z-50 animate-in fade-in slide-in-from-top-2">
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                    <span className="font-bold text-sm text-white">Notifications</span>
-                    <span className="text-[11px] text-slate-500">{unreadNotifs.length} unread</span>
-                  </div>
-                  <div className="mt-3 space-y-2.5 max-h-64 overflow-y-auto">
-                    {state.notifications.filter((n) => n.userId === currentUser.id).length === 0 ? (
-                      <div className="text-center py-6 text-xs text-slate-500">No notifications yet</div>
-                    ) : (
-                      state.notifications
-                        .filter((n) => n.userId === currentUser.id)
-                        .slice(0, 5)
-                        .map((notif) => (
-                          <div
-                            key={notif.id}
-                            className="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80 text-xs"
-                          >
-                            <div className="font-semibold text-slate-200">{notif.title}</div>
-                            <div className="text-slate-400 text-[11px] mt-0.5">{notif.message}</div>
-                            <div className="text-[10px] text-slate-600 mt-1">
-                              {new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                            </div>
-                          </div>
-                        ))
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Profile Avatar */}
@@ -126,6 +96,7 @@ export const Header: React.FC = () => {
       </header>
 
       <TokenLedgerModal isOpen={showLedger} onClose={() => setShowLedger(false)} />
+      <NotificationDrawer isOpen={showDrawer} onClose={() => setShowDrawer(false)} />
     </>
   );
 };

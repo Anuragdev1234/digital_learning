@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { uploadSubmissionFile } from '@/lib/storage/mockStorage';
 import { UploadCloud, Image as ImageIcon, CheckCircle2, AlertTriangle, X, Bot, ShieldCheck } from 'lucide-react';
+import { ParentalConsentModal } from '../privacy/ParentalConsentModal';
 import confetti from 'canvas-confetti';
 
 interface Props {
@@ -28,6 +29,9 @@ export const UploadEvidenceModal: React.FC<Props> = ({
   studentName,
   onSubmitSuccess,
 }) => {
+  const isMinorStudent = gradeLevel.toLowerCase().includes('class 9') || gradeLevel.toLowerCase().includes('class 10');
+  const [hasParentalConsent, setHasParentalConsent] = useState(false);
+  const [showConsentModal, setShowConsentModal] = useState(false);
   const [explanation, setExplanation] = useState(
     'I inspected a pair of metal kitchen scissors. The central pivot pin acts as the Fulcrum. My fingers exert Effort on the plastic looped handles, and the steel blades exert the cutting Load on cardboard. Because the handle length is greater than the blade cutting span, force is multiplied with a Mechanical Advantage > 1.'
   );
@@ -93,8 +97,7 @@ export const UploadEvidenceModal: React.FC<Props> = ({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const executeUploadAndVerify = async () => {
     setIsSubmitting(true);
     setErrorMsg(null);
 
@@ -134,6 +137,15 @@ export const UploadEvidenceModal: React.FC<Props> = ({
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isMinorStudent && !hasParentalConsent) {
+      setShowConsentModal(true);
+      return;
+    }
+    await executeUploadAndVerify();
   };
 
   return (
@@ -351,6 +363,18 @@ export const UploadEvidenceModal: React.FC<Props> = ({
           )}
         </div>
       </div>
+
+      <ParentalConsentModal
+        isOpen={showConsentModal}
+        onConsentGiven={async () => {
+          setHasParentalConsent(true);
+          setShowConsentModal(false);
+          await executeUploadAndVerify();
+        }}
+        onCancel={() => setShowConsentModal(false)}
+        studentName={studentName}
+        gradeLevel={gradeLevel}
+      />
     </div>
   );
 };

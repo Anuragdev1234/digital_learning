@@ -3,10 +3,12 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePassportStore } from '@/lib/db/store';
-import { Milestone, CheckCircle2, Lock, Clock, ArrowRight, BookOpen, Flame } from 'lucide-react';
+import { Milestone, CheckCircle2, Lock, Clock, ArrowRight, BookOpen, Flame, FlaskConical } from 'lucide-react';
+import { FrictionVectorSimulator } from '@/components/simulators/FrictionVectorSimulator';
 
 export default function MilestonesPage() {
   const { currentUser, state } = usePassportStore();
+  const [showSim, setShowSim] = React.useState(true);
 
   const activeTrack =
     state.tracks.find((t) => t.id === currentUser.trackId) || state.tracks[0];
@@ -14,16 +16,29 @@ export default function MilestonesPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8">
-        <div className="flex items-center gap-2 text-indigo-400 text-xs font-mono uppercase tracking-wider mb-2">
-          <Milestone className="w-4 h-4" />
-          <span>Academic Execution Roadmap</span>
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 text-indigo-400 text-xs font-mono uppercase tracking-wider mb-2">
+            <Milestone className="w-4 h-4" />
+            <span>Academic Execution Roadmap</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-black text-white">{activeTrack.title}</h1>
+          <p className="text-xs sm:text-sm text-slate-400 mt-2 max-w-2xl leading-relaxed">
+            {activeTrack.description} Every lesson is calibrated to 15 minutes of disciplined execution.
+          </p>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-black text-white">{activeTrack.title}</h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-2 max-w-2xl leading-relaxed">
-          {activeTrack.description} Every lesson is calibrated to 15 minutes of disciplined execution.
-        </p>
+
+        <button
+          onClick={() => setShowSim(!showSim)}
+          className="px-4 py-2.5 rounded-xl bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 text-xs font-bold transition-all flex items-center gap-2 self-start sm:self-auto"
+        >
+          <FlaskConical className="w-4 h-4" />
+          <span>{showSim ? 'Hide Mechanics Lab' : 'Launch Mechanics Lab'}</span>
+        </button>
       </div>
+
+      {/* High-Stakes Interactive Simulator */}
+      {showSim && <FrictionVectorSimulator />}
 
       {/* Modules Roadmap */}
       <div className="space-y-6">
