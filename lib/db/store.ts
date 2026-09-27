@@ -836,6 +836,21 @@ export function usePassportStore() {
     notifyListeners();
   }, []);
 
+  const addTrack = useCallback((trackData: Omit<AcademicTrack, 'id' | 'completedModules'>) => {
+    const newTrack: AcademicTrack = {
+      ...trackData,
+      id: `track-${Date.now()}`,
+      completedModules: 0,
+    };
+
+    globalState = {
+      ...globalState,
+      tracks: [...globalState.tracks, newTrack],
+    };
+    notifyListeners();
+    return newTrack;
+  }, []);
+
   return {
     state: globalState,
     currentUser,
@@ -853,5 +868,6 @@ export function usePassportStore() {
     applyMentor,
     approveMentor,
     rejectMentor,
+    addTrack,
   };
 }
