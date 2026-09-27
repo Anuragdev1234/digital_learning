@@ -73,15 +73,13 @@ export default function MentorSessionsPage() {
 
               <div className="flex items-center gap-3">
                 {ses.meetingUrl ? (
-                  <a
-                    href={ses.meetingUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-2 transition-colors"
+                  <Link
+                    href={`/sessions/${ses.id}`}
+                    className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-2 transition-colors shadow-lg shadow-emerald-600/20"
                   >
                     <Video className="w-4 h-4" />
-                    <span>Join Video Meeting</span>
-                  </a>
+                    <span>Launch Video Room</span>
+                  </Link>
                 ) : (
                   <span className="text-xs px-3 py-1 rounded-full bg-slate-800 text-slate-400 font-mono">
                     Completed

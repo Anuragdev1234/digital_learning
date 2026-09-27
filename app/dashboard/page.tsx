@@ -275,6 +275,39 @@ export default function StudentDashboardPage() {
             </Link>
           </div>
 
+          {/* Booked Mentorship Sessions Card */}
+          {state.bookings.filter((b) => b.studentId === currentUser.id).length > 0 && (
+            <div className="bg-slate-900 border border-emerald-500/30 rounded-3xl p-6 shadow-xl space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>My Booked Sessions</span>
+                </div>
+                <span className="text-[10px] font-mono text-slate-400">Video Call Ready</span>
+              </div>
+              <div className="space-y-3">
+                {state.bookings
+                  .filter((b) => b.studentId === currentUser.id)
+                  .map((b) => (
+                    <div
+                      key={b.id}
+                      className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 text-xs space-y-2"
+                    >
+                      <div className="font-bold text-white leading-tight">{b.rewardTitle}</div>
+                      <div className="text-[11px] text-slate-400">Mentor: {b.mentorName}</div>
+                      <Link
+                        href={`/sessions/${b.id}`}
+                        className="w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-md"
+                      >
+                        <span>Join Live Video Room</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
+
           {/* Community Wiki Quick Card */}
           <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
             <div className="flex items-center gap-3">
